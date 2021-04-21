@@ -3,6 +3,10 @@ import 'package:pixel_perfect/pixel_perfect.dart';
 
 const iconsPath = 'assets/icons/';
 const imagePath = 'assets/images/';
+
+const mockupHeight = 812;
+const mockupWidth = 375;
+
 void main() {
   runApp(MyApp());
 }
@@ -20,7 +24,11 @@ class MyApp extends StatelessWidget {
 class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final scale = mockupWidth / width;
+    final textScaleFactor = width / mockupWidth;
     return PixelPerfect(
+      scale: scale,
       assetPath: imagePath + 'profile_light.jpeg',
       child: SafeArea(
         child: Padding(
@@ -29,30 +37,35 @@ class ProfileScreen extends StatelessWidget {
             body: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                SizedBox(height: 40),
                 Row(
                   children: [
-                    Text(
-                      'pieroborgo',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: -1,
+                    Image.asset(
+                      imagePath + 'avatar.png',
+                      scale: scale,
+                    ),
+                    for (var stats in userStats) ...[
+                      SizedBox(
+                        width: stats.leftPaddingFactor / mockupWidth * width,
                       ),
-                    ),
-                    Spacer(),
-                    IconButton(
-                      onPressed: () {},
-                      icon: Image.asset(iconsPath + 'new-video.png'),
-                      constraints: BoxConstraints.tight(Size(21.5, 21.5)),
-                      padding: EdgeInsets.zero,
-                    ),
-                    SizedBox(width: 30.5),
-                    IconButton(
-                      onPressed: () {},
-                      icon: Image.asset(iconsPath + 'menu.png'),
-                      constraints: BoxConstraints.tight(Size(21.5, 21.5)),
-                      padding: EdgeInsets.zero,
-                    ),
+                      Column(
+                        children: [
+                          Text(
+                            stats.value.toString(),
+                            textScaleFactor: textScaleFactor,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16.5,
+                            ),
+                          ),
+                          Text(
+                            stats.name,
+                            textScaleFactor: textScaleFactor,
+                            style: TextStyle(fontSize: 14),
+                          ),
+                        ],
+                      )
+                    ]
                   ],
                 )
               ],
@@ -63,3 +76,33 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 }
+
+class UserStats {
+  final int value;
+  final String name;
+  final double leftPaddingFactor;
+
+  UserStats({
+    required this.value,
+    required this.name,
+    required this.leftPaddingFactor,
+  });
+}
+
+final userStats = [
+  UserStats(
+    value: 210,
+    name: 'post',
+    leftPaddingFactor: 41,
+  ),
+  UserStats(
+    value: 600,
+    name: 'follower',
+    leftPaddingFactor: 39,
+  ),
+  UserStats(
+    value: 500,
+    name: 'following',
+    leftPaddingFactor: 24,
+  ),
+];
